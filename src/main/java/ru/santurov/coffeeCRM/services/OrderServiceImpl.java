@@ -16,19 +16,31 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void publishEvent(OrderEvent event) {
+        validateEvent(event);
+
+        event.setEventDate(LocalDateTime.now());
+        eventRepository.save(event);
+    }
+
+    private void validateEvent(OrderEvent event) {
         List<OrderEvent> events = eventRepository.findByOrderId(event.getOrderId());
 
         boolean isRegistered = events.stream().anyMatch(i -> i instanceof OrderRegisteredEvent);
         boolean isDone = events.stream().anyMatch(i -> i instanceof OrderCancelledEvent || i instanceof OrderIssuedEvent);
+        boolean isExists = events.stream().anyMatch(i -> event.getClass().isInstance(i));
+        boolean isTaken = events.stream().anyMatch(i -> i instanceof OrderTakenEvent);
+        boolean isReady = events.stream().anyMatch(i -> i instanceof OrderReadyEvent);
 
-        if (!isRegistered && !(event instanceof OrderRegisteredEvent))
-            throw new IllegalStateException("Заказ должен быть зарегистрирован до назначения других событий.");
         if (isDone)
-            throw new IllegalStateException("Заказ уже завершен. Невозможно назначить событие.");
-
-        event.setEventDate(LocalDateTime.now());
-        eventRepository.save(event);
-
+            throw new IllegalArgumentException("Заказ уже завершен. Невозможно назначить событие.");
+        if (isExists)
+            throw new IllegalArgumentException("Событие уже существует.");
+        if (!isRegistered && !(event instanceof OrderRegisteredEvent))
+            throw new IllegalArgumentException("Заказ должен быть зарегистрирован до назначения других событий.");
+        if (event instanceof OrderReadyEvent && !isTaken)
+            throw new IllegalArgumentException("Невозможно объявить готовность, если заказ не был взять в работу.");
+        if (event instanceof OrderIssuedEvent && !isReady)
+            throw new IllegalArgumentException("Невозможно выдать заказ, который не готов к выдаче.");
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "event_type")
 public abstract class OrderEvent {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
