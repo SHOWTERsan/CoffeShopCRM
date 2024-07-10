@@ -16,4 +16,7 @@ public class OrderEvent {
     private int orderId;
     private int employeeId;
     private LocalDateTime eventDate;
+
+    @Column(name = "event_type", insertable = false, updatable = false)
+    private String eventType;
 }
