@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,7 +19,7 @@ public class Order {
     private LocalDateTime estimatedDeliveryTime;
     private LocalDateTime completionTime;
     private String cancellationReason;
-    private List<OrderEvent> events;
+    private List<OrderEvent> events = new ArrayList<>();;
 
     public void addEvent(OrderEvent event) {
         events.add(event);

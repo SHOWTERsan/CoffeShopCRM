@@ -2,7 +2,7 @@ package ru.santurov.coffeeCRM.models;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,10 +13,9 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue("ORDER_REGISTERED")
-@AllArgsConstructor
 public class OrderRegisteredEvent extends OrderEvent{
     private int clientId;
     private int productId;
     private LocalDateTime estimatedDeliveryTime;
-    private BigDecimal cost;
+    private BigDecimal productCost;
 }
